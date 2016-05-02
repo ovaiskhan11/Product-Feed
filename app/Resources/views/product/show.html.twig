@@ -1,0 +1,26 @@
+{% for key, xml_feed in xml_feeds %}
+	<div class="col-md-4">
+		  <section class="panel">
+			  <div class="pro-img-box">
+				  <img style="border:2px solid #fc5959;" src="{{xml_feed.imageURL}}" alt="{{xml_feed.name}}"/>
+				  <a href="{{xml_feed.productURL}}" class="adtocart" target="_blank">
+					  <i class="fa fa-shopping-cart"></i>
+				  </a>
+			  </div>
+
+			  <div class="panel-body text-center" style="height: 250px;">
+				  <h4>
+					  <a href="{{xml_feed.productURL}}" class="pro-title" title="{{xml_feed.name}}" target="_blank">
+						  {{xml_feed.name|striptags|slice(0, 40) ~ '...'}}
+					  </a>
+				  </h4>
+				  <p title="{{xml_feed.description}}"><strong>Description:</strong> {{xml_feed.description|striptags|slice(0, 50) ~ '...'}}</p>	
+				  <p><strong>Product Id:</strong> {{xml_feed.productID}}</p>	
+				  <p><strong>Category:</strong> {{xml_feed.categories.category|join(',')}}</p>
+				  <p class="price">${{xml_feed.price}}</p>
+			  </div>
+		  </section>
+	</div>
+{% endfor %}
+
+

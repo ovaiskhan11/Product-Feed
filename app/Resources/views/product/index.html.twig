@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Product Feed{% endblock %}</title>
+        {% block stylesheets %}
+			<link href="{{ asset('vendor/css/bootstrap.min.css') }}" rel="stylesheet">
+			<link href="{{ asset('vendor/css/bootstrap-reset.css') }}" rel="stylesheet">
+            <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+			<link href="{{ asset('vendor/assets/font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
+			<link href="{{ asset('vendor/assets/jquery-ui/jquery-ui-1.10.1.custom.min.css') }}" rel="stylesheet"/>
+			<link href="{{ asset('vendor/css/style.css') }}" rel="stylesheet">
+			<link href="{{ asset('vendor/css/style-responsive.css') }}" rel="stylesheet" />
+        {% endblock %}
+    </head>
+    <body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-6 col-sm-offset-3">
+					<div id="imaginary_container"> 
+						<div class="input-group stylish-input-group">
+							<input type="text" name="feed_url" id="feed_url" class="form-control"  placeholder="Search Feed" >
+							<span class="input-group-addon">
+								<button type="submit" id="search_submit">
+									<span class="glyphicon glyphicon-search"></span>
+								</button>  
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="loader" id="loading-sp" style="display:none;">
+			<img src="{{ asset('images/page-loader.gif') }}" style="position:absolute;left:50%;top:25%;margin-left:-275px;">
+		</div>
+		<section id="container" class="" style="display:none;">
+			<!--main content start-->
+			  <section id="main-content">
+				  <section class="wrapper">
+					  <!-- page start-->
+					  <div class="row">
+						  <div class="col-md-9">
+							  <div class="row product-list" id="display_result">
+							  
+							  </div>
+						  </div>
+					  </div>
+					  <!-- page end-->
+				  </section>
+			  </section>
+			  <!--main content end-->
+		</section>	
+		<input type="hidden" name="page_number" id="page_number" value="1">
+		<div class="loadMore-button" style="text-align: center;display:none;margin-bottom:10px;"> 
+			<a id ="load_div" href="javascript:;" style="border: 2px solid #dedede;border-radius: 2px;color: #7e7b7b;display: inline-block;font: 400 11px/34px 'Raleway',sans-serif;margin-top: 30px;min-width: 80px; outline: 0 none;padding: 0 20px;text-decoration: none;">LOAD MORE</a> 
+			<i id="loading_spin" class="fa fa-spinner fa-spin" style="font-size:22px; display:none;postion:relative;top:2px;"></i>
+		</div>	
+
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery-1.7.2.min.js') }}"></script>
+			<script>
+				$('#search_submit').click(function(){	  
+					var feed_url = $("#feed_url").val();  
+					if(feed_url == ""){
+						alert("Please enter url");
+						return false;
+					}
+					$.ajax({
+						type: "POST",
+						url: "/getdata",
+						data:  "feed_url="+encodeURIComponent(feed_url),
+						dataType: "json",
+						success: function(msg)
+						{
+							if(msg.status == 1){
+								$("#loading-sp").hide();
+								$("#container").show();
+								$("#display_result").append(msg.html);
+								if(msg.without_limit_flag == 1){
+									$(".loadMore-button").show();
+									$("#page_number").val(msg.page_number);
+								}
+							}
+							else if(msg.status == 0){
+								$("#loading-sp").hide();
+								 alert(msg.html);
+							}
+							else{
+								$("#loading-sp").hide();
+							    alert("No Product found");
+							}							
+						},
+						beforeSend: function()
+						{
+							$("#loading-sp").show();
+						}
+					});
+				  
+				  return false ;
+				});
+				
+				$('.loadMore-button').click(function(){	  
+					var feed_url = $("#feed_url").val(); 
+					if(feed_url == ""){
+						alert("Please enter url");
+						return false;
+					}		
+					var page_number = $("#page_number").val();
+					$.ajax({
+						type: "POST",
+						url: "/getdata",
+						data:  "feed_url="+encodeURIComponent(feed_url+"&page_number="+page_number),
+						dataType: "json",
+						success: function(msg)
+						{
+							if(msg.status == 1){
+								$("#loading_spin").hide();
+								$("#container").show();
+								$("#display_result").append(msg.html);
+								if(msg.without_limit_flag == 1){
+									$(".loadMore-button").show();
+									$("#page_number").val(msg.page_number);
+								}
+							}
+							else if(msg.status == 0){
+								$("#loading-sp").hide();
+								 alert(msg.html);
+							}
+							else{
+								$("#loading-sp").hide();
+							    alert("No Product found");
+							}							
+						},
+						beforeSend: function()
+						{
+							$("#loading_spin").show();
+						}
+					});
+				  
+				  return false ;
+				});
+				</script>
+        {% endblock %}
+    </body>
+</html>
