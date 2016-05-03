@@ -19,6 +19,7 @@ fetch the given URL.
 * Download zip folder from github
 * Extract the zip file in your local host or server
 * Make folder named tt_assignment. you can change as per your need.
+* Also extract vendor.zip file in the project folder
 * Run Server using this command in CMD: D:\xampp\htdocs\tt_assignment>php bin/console server:run
 * In CMD, it gives you the server url: http://127.0.0.1:8000
 * Now open browser and hit the url: http://127.0.0.1:8000/product
